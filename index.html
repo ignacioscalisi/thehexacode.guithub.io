@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>index.html - The H3xa CØdë</title>
+<style>
+:root {
+  --red: #FF3200;
+  --black: #000;
+}
+body {
+  margin: 0;
+  background: var(--black);
+  color: var(--red);
+  font-family: 'Courier New', Courier, monospace;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+  overflow: hidden;
+}
+body::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255,50,0,0.05) 0%, transparent 70%);
+  pointer-events: none;
+  animation: flicker 2s infinite;
+}
+@keyframes flicker {
+  0%, 19%, 21%, 50%, 51%, 100% { opacity: 0.05; }
+  20%, 50% { opacity: 0.15; }
+}
+h1 {
+  font-size: 3rem;
+  position: relative;
+  color: var(--red);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 5px var(--red), 0 0 10px var(--red), 0 0 20px var(--red);
+}
+h1::before, h1::after {
+  content: 'The H3xa CØdë';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+}
+h1::before {
+  animation: glitchTop 1s infinite linear alternate-reverse;
+  color: var(--red);
+  clip: rect(0, 9999px, 0, 0);
+}
+h1::after {
+  animation: glitchBottom 1.2s infinite linear alternate-reverse;
+  color: var(--red);
+  clip: rect(0, 9999px, 0, 0);
+}
+@keyframes glitchTop {
+  0% { clip: rect(0, 9999px, 5%, 0); transform: translate(-2px,-2px);}
+  20% { clip: rect(5%, 9999px, 10%, 0); transform: translate(2px,2px);}
+  40% { clip: rect(10%, 9999px, 15%, 0); transform: translate(-2px,2px);}
+  60% { clip: rect(15%, 9999px, 20%, 0); transform: translate(2px,-2px);}
+  80% { clip: rect(20%, 9999px, 25%, 0); transform: translate(-1px,1px);}
+  100% { clip: rect(25%, 9999px, 30%, 0); transform: translate(1px,-1px);}
+}
+@keyframes glitchBottom {
+  0% { clip: rect(75%, 9999px, 80%, 0); transform: translate(1px,1px);}
+  20% { clip: rect(70%, 9999px, 75%, 0); transform: translate(-1px,-1px);}
+  40% { clip: rect(65%, 9999px, 70%, 0); transform: translate(2px,1px);}
+  60% { clip: rect(60%, 9999px, 65%, 0); transform: translate(-2px,-1px);}
+  80% { clip: rect(55%, 9999px, 60%, 0); transform: translate(1px,2px);}
+  100% { clip: rect(50%, 9999px, 55%, 0); transform: translate(-1px,-2px);}
+}
+.slogan {
+  font-size: 1.2rem;
+  margin: 20px 0;
+  color: var(--red);
+  text-shadow: 0 0 5px var(--red);
+}
+a.enter-btn {
+  display: inline-block;
+  padding: 12px 24px;
+  border: 2px solid var(--red);
+  border-radius: 8px;
+  color: var(--red);
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px var(--red);
+}
+a.enter-btn:hover {
+  background: var(--red);
+  color: var(--black);
+  box-shadow: 0 0 20px var(--red), 0 0 40px var(--red);
+}
+#countdown {
+  font-size: 2rem;
+  margin: 20px 0;
+  color: var(--red);
+  text-shadow: 0 0 5px var(--red), 0 0 10px var(--red), 0 0 20px var(--red);
+}
+</style>
+</head>
+<body>
+<h1>The H3xa CØdë</h1>
+<div id="countdown">Cargando timer...</div>
+<div class="slogan">ROJO nunca fue solo color. #FF3200 habla.</div>
+<a class="enter-btn" href="page1.html">ENTER</a>
+<script>
+function startCountdown() {
+  const countdownElement = document.getElementById('countdown');
+  const targetDate = new Date('2025-09-06T14:00:00-03:00');
+
+  function updateCountdown() {
+    const now = new Date();
+    const diff = targetDate - now;
+
+    if (diff <= 0) {
+      countdownElement.textContent = '¡Tiempo alcanzado!';
+      clearInterval(interval);
+      return;
+    }
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    countdownElement.textContent = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+  }
+
+  updateCountdown();
+  const interval = setInterval(updateCountdown, 1000);
+}
+
+startCountdown();
+</script>
+</body>
+</html>
