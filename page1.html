@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The H3xa CØdë — Bienvenida ROJO16</title>
+<style>
+  :root {
+    --red: #FF3200;
+    --black: #000;
+  }
+  html, body {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--black);
+    color: var(--red);
+    font-family: "Courier New", Courier, monospace;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .wrap {
+    width: min(900px, 92vw);
+    padding: 24px;
+    text-align: left;
+    position: relative;
+  }
+  .wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255,50,0,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    animation: flicker 2s infinite;
+  }
+  @keyframes flicker {
+    0%, 19%, 21%, 50%, 51%, 100% { opacity: 0.05; }
+    20%, 50% { opacity: 0.15; }
+  }
+  h1 {
+    margin: 0 0 8px 0;
+    font-size: clamp(28px, 4vw, 40px);
+    letter-spacing: 0.04em;
+    text-shadow: 0 0 5px var(--red), 0 0 10px var(--red), 0 0 20px var(--red);
+  }
+  .sub {
+    opacity: 0.9;
+    margin-bottom: 24px;
+    font-size: clamp(14px, 2.2vw, 16px);
+  }
+  .type {
+    border-right: 2px solid var(--red);
+    white-space: pre-wrap;
+    overflow: hidden;
+    min-height: 10ch;
+    animation: blink 0.85s steps(2, start) infinite;
+  }
+  @keyframes blink { to { border-color: transparent; } }
+
+  .actions {
+    margin-top: 28px;
+    display: flex;
+    gap: 12px;
+  }
+  .btn {
+    padding: 10px 18px;
+    border: 2px solid var(--red);
+    border-radius: 8px;
+    color: var(--red);
+    background: transparent;
+    font-weight: bold;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--red);
+    transition: 0.25s ease;
+  }
+  .btn:hover:enabled { background: var(--red); color: var(--black); box-shadow: 0 0 20px var(--red), 0 0 40px var(--red); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+  .muted { opacity: 0.65; font-size: 0.9rem; }
+  a { color: var(--red); }
+</style>
+</head>
+<body>
+  <div class="wrap" role="main" aria-live="polite">
+    <h1>Bienvenido, ROJO16.</h1>
+    <div class="sub">Tu código ha sido validado. Mantén la calma. Observa las señales.</div>
+    <div id="type" class="type" ></div>
+
+    <div class="actions">
+      <button id="continue" class="btn" disabled onclick="window.location.href='page2.html'">CONTINUAR ▸</button>
+      <button id="skip" class="btn" onclick="finishTyping(true)">SALTAR TEXTO</button>
+    </div>
+    <div class="muted">Consejo: en <em>The H3xa CØdë</em> nada es decoración. Los números hablan.</div>
+  </div>
+
+<script>
+  const lines = [
+    "Tu código ha sido validado.",
+    "Desde ahora formas parte de un sendero oculto, uno que pocos se atreven a recorrer.",
+    "Cada pista, cada enigma y cada sombra que encuentres no está allí por casualidad.",
+    "El rojo no es color: es advertencia, es clave, es señal.",
+    "El tiempo juega en tu contra. La verdad no se muestra, se descifra.",
+    "Prepárate: a partir de este momento todo lo que veas, escuches y leas puede ser parte del rompecabezas.",
+    "Has ingresado a The H3xa CØdë."
+  ];
+
+  const el = document.getElementById('type');
+  const btn = document.getElementById('continue');
+  let lineIdx = 0, charIdx = 0, typing = true, finished = false;
+  const speed = 22; // ms por carácter
+  const pauseBetween = 600; // pausa entre líneas
+
+  function typeLoop() {
+    if (!typing || finished) return;
+    if (lineIdx >= lines.length) return finishTyping();
+    const line = lines[lineIdx];
+    if (charIdx < line.length) {
+      el.textContent += line.charAt(charIdx);
+      charIdx++;
+      setTimeout(typeLoop, speed);
+    } else {
+      el.textContent += "\n"; // nueva línea
+      lineIdx++; charIdx = 0;
+      setTimeout(typeLoop, pauseBetween);
+    }
+  }
+
+  function finishTyping(skipped = false) {
+    if (finished) return;
+    finished = true; typing = false;
+    if (skipped) {
+      el.textContent = lines.join("\n") + "\n";
+    }
+    btn.disabled = false;
+  }
+
+  // Permite pausar/reanudar con clic en el texto (opcional)
+  el.addEventListener('click', () => {
+    if (finished) return;
+    typing = !typing;
+    if (typing) typeLoop();
+  });
+
+  // Arranca
+  typeLoop();
+</script>
+</body>
+</html>
