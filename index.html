@@ -1,145 +1,235 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>index.html - The H3xa CØdë</title>
-<style>
-:root {
-  --red: #FF3200;
-  --black: #000;
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>El Viaje de ROJO16 — Web Interactiva</title>
+  <style>
+    :root{
+      --bg:#0b0b12; --fg:#e9e9ef; --muted:#babacc; --accent:#ff415d; --panel:#141423; --verde:#8fe388; --violeta:#b18ae6;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    body{margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji','Segoe UI Emoji',sans-serif; background:radial-gradient(1200px 800px at 20% -10%,#1d1d32,transparent),linear-gradient(180deg,#0b0b12 0%, #090910 100%); color:var(--fg);}
+    header{position:sticky; top:0; z-index:10; backdrop-filter: blur(8px); background:rgba(9,9,16,.6); border-bottom:1px solid rgba(255,255,255,.06)}
+    .wrap{max-width:900px; margin:0 auto; padding:16px 20px}
+    .brand{display:flex; align-items:center; gap:12px}
+    .logo{width:32px; height:32px; border-radius:12px; background:conic-gradient(from 180deg, var(--accent), #ff7a7a, #ffa3a3, var(--accent)); box-shadow:var(--shadow)}
+    .brand h1{font-size:18px; margin:0; letter-spacing:.3px}main{padding:28px 20px}
+.card{background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid rgba(255,255,255,.08); border-radius:18px; box-shadow:var(--shadow); overflow:hidden}
+.card .inner{padding:24px}
+.title{display:flex; align-items:center; justify-content:space-between; gap:10px}
+.title h2{margin:0; font-weight:700; font-size:22px}
+.badge{font-size:12px; color:var(--muted); background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); padding:6px 10px; border-radius:999px}
+
+.consequence{background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); padding:14px 16px; border-radius:14px; margin:16px 0}
+.consequence strong{color:var(--muted)}
+
+.section{margin:16px 0}
+.section h3{margin:.2rem 0 .5rem; font-size:14px; color:var(--muted); font-weight:600; letter-spacing:.4px; text-transform:uppercase}
+.narrative{line-height:1.7; font-size:16px}
+
+.voice-verde{color:var(--verde); font-style:italic}
+.voice-violeta{color:var(--violeta); font-style:italic}
+
+.choices{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px}
+button.choice{padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.03); color:var(--fg); cursor:pointer; transition:.2s transform ease, .2s background-color ease, .2s border-color ease; font-weight:600}
+button.choice:hover{transform:translateY(-1px); background:rgba(255,255,255,.06)}
+button.choice:active{transform:translateY(0)}
+
+.footer{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; color:var(--muted); font-size:13px}
+
+.controls{display:flex; gap:8px; flex-wrap:wrap}
+.controls button{padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.02); color:var(--fg); cursor:pointer}
+
+.progress{height:8px; background:rgba(255,255,255,.06); border-radius:999px; overflow:hidden; margin:12px 0 0}
+.progress > div{height:100%; background:linear-gradient(90deg, var(--accent), #ff7a7a); width:0%}
+
+@media (max-width:640px){
+  .choices{grid-template-columns:1fr}
 }
-body {
-  margin: 0;
-  background: var(--black);
-  color: var(--red);
-  font-family: 'Courier New', Courier, monospace;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  text-align: center;
-  overflow: hidden;
-}
-body::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle, rgba(255,50,0,0.05) 0%, transparent 70%);
-  pointer-events: none;
-  animation: flicker 2s infinite;
-}
-@keyframes flicker {
-  0%, 19%, 21%, 50%, 51%, 100% { opacity: 0.05; }
-  20%, 50% { opacity: 0.15; }
-}
-h1 {
-  font-size: 3rem;
-  position: relative;
-  color: var(--red);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  text-shadow: 0 0 5px var(--red), 0 0 10px var(--red), 0 0 20px var(--red);
-}
-h1::before, h1::after {
-  content: 'The H3xa CØdë';
-  position: absolute;
-  left: 0;
-  width: 100%;
-  overflow: hidden;
-}
-h1::before {
-  animation: glitchTop 1s infinite linear alternate-reverse;
-  color: var(--red);
-  clip: rect(0, 9999px, 0, 0);
-}
-h1::after {
-  animation: glitchBottom 1.2s infinite linear alternate-reverse;
-  color: var(--red);
-  clip: rect(0, 9999px, 0, 0);
-}
-@keyframes glitchTop {
-  0% { clip: rect(0, 9999px, 5%, 0); transform: translate(-2px,-2px);}
-  20% { clip: rect(5%, 9999px, 10%, 0); transform: translate(2px,2px);}
-  40% { clip: rect(10%, 9999px, 15%, 0); transform: translate(-2px,2px);}
-  60% { clip: rect(15%, 9999px, 20%, 0); transform: translate(2px,-2px);}
-  80% { clip: rect(20%, 9999px, 25%, 0); transform: translate(-1px,1px);}
-  100% { clip: rect(25%, 9999px, 30%, 0); transform: translate(1px,-1px);}
-}
-@keyframes glitchBottom {
-  0% { clip: rect(75%, 9999px, 80%, 0); transform: translate(1px,1px);}
-  20% { clip: rect(70%, 9999px, 75%, 0); transform: translate(-1px,-1px);}
-  40% { clip: rect(65%, 9999px, 70%, 0); transform: translate(2px,1px);}
-  60% { clip: rect(60%, 9999px, 65%, 0); transform: translate(-2px,-1px);}
-  80% { clip: rect(55%, 9999px, 60%, 0); transform: translate(1px,2px);}
-  100% { clip: rect(50%, 9999px, 55%, 0); transform: translate(-1px,-2px);}
-}
-.slogan {
-  font-size: 1.2rem;
-  margin: 20px 0;
-  color: var(--red);
-  text-shadow: 0 0 5px var(--red);
-}
-a.enter-btn {
-  display: inline-block;
-  padding: 12px 24px;
-  border: 2px solid var(--red);
-  border-radius: 8px;
-  color: var(--red);
-  text-decoration: none;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 10px var(--red);
-}
-a.enter-btn:hover {
-  background: var(--red);
-  color: var(--black);
-  box-shadow: 0 0 20px var(--red), 0 0 40px var(--red);
-}
-#countdown {
-  font-size: 2rem;
-  margin: 20px 0;
-  color: var(--red);
-  text-shadow: 0 0 5px var(--red), 0 0 10px var(--red), 0 0 20px var(--red);
-}
-</style>
+
+  </style>
 </head>
 <body>
-<h1>The H3xa CØdë</h1>
-<div id="countdown">Cargando timer...</div>
-<div class="slogan">ROJO nunca fue solo color. #FF3200 habla.</div>
-<a class="enter-btn" href="page1.html">ENTER</a>
-<script>
-function startCountdown() {
-  const countdownElement = document.getElementById('countdown');
-  const targetDate = new Date('2025-09-06T14:00:00-03:00');
+  <header>
+    <div class="wrap brand">
+      <div class="logo" aria-hidden="true"></div>
+      <h1>El Viaje de ROJO16 — Interactivo</h1>
+    </div>
+  </header>
+  <main class="wrap">
+    <div class="card" role="region" aria-live="polite">
+      <div class="inner">
+        <div class="title">
+          <h2 id="title">Fragmento</h2>
+          <span class="badge" id="badge">1 / 9</span>
+        </div>
+        <div id="consequence" class="consequence" hidden></div><div class="section">
+      <h3>Historia</h3>
+      <p id="history" class="narrative"></p>
+    </div>
+    <div class="section">
+      <h3>VERDE</h3>
+      <p id="verde" class="narrative voice-verde"></p>
+    </div>
+    <div class="section">
+      <h3>VIOLETA</h3>
+      <p id="violeta" class="narrative voice-violeta"></p>
+    </div>
 
-  function updateCountdown() {
-    const now = new Date();
-    const diff = targetDate - now;
+    <div id="choices" class="choices"></div>
 
-    if (diff <= 0) {
-      countdownElement.textContent = '¡Tiempo alcanzado!';
-      clearInterval(interval);
-      return;
+    <div class="footer">
+      <div>Elegí con los botones o con el teclado: <strong>A</strong>/<strong>B</strong>.</div>
+      <div class="controls">
+        <button id="restartBtn" title="Reiniciar">Reiniciar</button>
+        <button id="saveBtn" title="Guardar progreso">Guardar</button>
+        <button id="loadBtn" title="Cargar progreso">Cargar</button>
+      </div>
+    </div>
+    <div class="progress" aria-hidden="true"><div id="bar"></div></div>
+  </div>
+</div>
+
+  </main>  <script>
+    // =====================
+    // Datos narrativos
+    // =====================
+    const fragments = [
+      {
+        id:1, title:"🌑 Fragmento 1 – El Despertar",
+        history:`ROJO16 se despertó sobresaltada. El amanecer apenas entraba por la ventana y la habitación estaba cubierta por una penumbra suave, esa luz indecisa que no es de noche ni de día. La sensación era clara: había soñado algo importante… pero el recuerdo se disolvía como agua entre los dedos.\n\nNo quedaba imagen precisa, solo un eco. Una risa. Y detrás de esa risa, la silueta de un árbol tan alto que parecía rozar el cielo. El corazón le latía con fuerza.\n\nSobre la mesa de luz, un papel doblado en cuatro: un árbol solitario con una copa en espiral que parece escapar del papel. Por un instante, ROJO16 siente que el dibujo la observa.`,
+        verde:`Despertar no siempre es abrir los ojos, ROJO16. Es escuchar lo que todavía late en vos. Ese papel no es un dibujo: es un espejo. El árbol espera que decidas si volver a recordarlo o seguir corriendo de lo que fuiste.`,
+        violeta:`Elegí, ROJO16. ¿Vas a hundirte en la espiral hacia adentro, reclamando lo que perdiste… o vas a dejar que la espiral te arrastre hacia afuera, donde nada te pertenece todavía?`,
+        choices:{A:"Seguir la espiral hacia adentro", B:"Seguir la espiral hacia afuera"},
+      },
+      // ... (fragmentos 2 a 9 como estaban guardados) ...
+    ];
+
+    // =====================
+    // Estado y referencias
+    // =====================
+    let index = 0; // 0..8
+    let choices = []; // almacena 'A'|'B' por fragmento (1..8)
+
+    const el = {
+      title: document.getElementById('title'),
+      badge: document.getElementById('badge'),
+      consequence: document.getElementById('consequence'),
+      history: document.getElementById('history'),
+      verde: document.getElementById('verde'),
+      violeta: document.getElementById('violeta'),
+      choices: document.getElementById('choices'),
+      bar: document.getElementById('bar'),
+      restart: document.getElementById('restartBtn'),
+      save: document.getElementById('saveBtn'),
+      load: document.getElementById('loadBtn'),
+    };
+
+    function render(){
+      if(!Array.isArray(fragments) || fragments.length === 0){
+        el.title.textContent = 'Error: no hay fragmentos cargados';
+        el.badge.textContent = '0 / 0';
+        el.history.textContent = 'Revisá la definición de datos (fragments[])';
+        el.verde.textContent = '';
+        el.violeta.textContent = '';
+        el.choices.innerHTML = '';
+        el.consequence.hidden = true;
+        el.bar.style.width = '0%';
+        return;
+      }
+      if(index < 0 || index >= fragments.length){ index = 0; }
+      const frag = fragments[index];
+      el.title.textContent = frag.title;
+      el.badge.textContent = `${index+1} / ${fragments.length}`;
+
+      if(index>0){
+        const prevChoice = choices[index-1];
+        const cons = frag.consequence?.[prevChoice];
+        if(cons){
+          el.consequence.hidden = false;
+          el.consequence.innerHTML = `<strong>Consecuencia de tu elección:</strong> ${cons}`;
+        }else{
+          el.consequence.hidden = true;
+          el.consequence.textContent = '';
+        }
+      } else {
+        el.consequence.hidden = true;
+        el.consequence.textContent = '';
+      }
+
+      el.history.textContent = frag.history || '';
+      el.verde.textContent = frag.verde || '';
+      el.violeta.textContent = frag.violeta || '';
+
+      el.choices.innerHTML = '';
+      if(frag.choices){
+        const aBtn = document.createElement('button');
+        aBtn.className = 'choice';
+        aBtn.textContent = `A — ${frag.choices.A}`;
+        aBtn.onclick = ()=> choose('A');
+
+        const bBtn = document.createElement('button');
+        bBtn.className = 'choice';
+        bBtn.textContent = `B — ${frag.choices.B}`;
+        bBtn.onclick = ()=> choose('B');
+
+        el.choices.appendChild(aBtn);
+        el.choices.appendChild(bBtn);
+      } else {
+        const end = document.createElement('div');
+        end.className = 'narrative';
+        end.style.marginTop = '8px';
+        end.innerHTML = '<em>Fin del viaje. Podés reiniciar cuando quieras.</em>';
+        el.choices.appendChild(end);
+      }
+
+      const progress = (index)/(fragments.length-1) * 100;
+      el.bar.style.width = `${progress}%`;
     }
 
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    function choose(letter){
+      choices[index] = letter;
+      if(index < fragments.length-1){
+        index++;
+        render();
+        window.scrollTo({top:0, behavior:'smooth'});
+      }
+      saveSession();
+    }
 
-    countdownElement.textContent = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
-  }
+    window.addEventListener('keydown', (e)=>{
+      if(['a','A'].includes(e.key)){
+        const frag = fragments[index];
+        if(frag && frag.choices) choose('A');
+      }
+      if(['b','B'].includes(e.key)){
+        const frag = fragments[index];
+        if(frag && frag.choices) choose('B');
+      }
+    });
 
-  updateCountdown();
-  const interval = setInterval(updateCountdown, 1000);
-}
+    function saveSession(){
+      try{
+        localStorage.setItem('rojo16_index', String(index));
+        localStorage.setItem('rojo16_choices', JSON.stringify(choices));
+      }catch{}
+    }
 
-startCountdown();
-</script>
-</body>
+    function loadSession(){
+      try{
+        const i = parseInt(localStorage.getItem('rojo16_index')||'0',10);
+        const c = JSON.parse(localStorage.getItem('rojo16_choices')||'[]');
+        if(!Number.isNaN(i) && i>=0 && i<fragments.length){ index=i; }
+        if(Array.isArray(c)) choices=c; else choices=[];
+      }catch{}
+      render();
+    }
+
+    el.restart.onclick = ()=>{ index = 0; choices = []; render(); saveSession(); window.scrollTo({top:0,behavior:'smooth'}); };
+    el.save.onclick = ()=>{ saveSession(); el.save.textContent='Guardado'; setTimeout(()=> el.save.textContent='Guardar', 1200)};
+    el.load.onclick = ()=>{ loadSession(); el.load.textContent='Cargado'; setTimeout(()=> el.load.textContent='Cargar', 1200)};
+
+    loadSession();
+  </script></body>
 </html>
