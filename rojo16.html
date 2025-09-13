@@ -1,0 +1,447 @@
+<!DOCTYPE html><html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>El Viaje de ROJO16 — Web Interactiva</title>
+  <style>
+    :root{
+      --bg:#0b0b12; --fg:#e9e9ef; --muted:#babacc; --accent:#ff415d; --panel:#141423; --verde:#8fe388; --violeta:#b18ae6;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    body{margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji','Segoe UI Emoji',sans-serif; background:radial-gradient(1200px 800px at 20% -10%,#1d1d32,transparent),linear-gradient(180deg,#0b0b12 0%, #090910 100%); color:var(--fg); font-size:17px; line-height:1.6}
+    header{position:sticky; top:0; z-index:10; backdrop-filter: blur(8px); background:rgba(9,9,16,.6); border-bottom:1px solid rgba(255,255,255,.06)}
+    .wrap{max-width:900px; margin:0 auto; padding:16px 20px}
+    .brand{display:flex; align-items:center; gap:12px}
+    .logo{width:32px; height:32px; border-radius:12px; background:conic-gradient(from 180deg, var(--accent), #ff7a7a, #ffa3a3, var(--accent)); box-shadow:var(--shadow)}
+    .brand h1{font-size:18px; margin:0; letter-spacing:.3px}
+    main{padding:28px 20px}
+
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid rgba(255,255,255,.08); border-radius:18px; box-shadow:var(--shadow); overflow:hidden}
+    .card .inner{padding:24px}
+    .title{display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .title h2{margin:0; font-weight:700; font-size:22px}
+    .badge{font-size:12px; color:var(--muted); background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); padding:6px 10px; border-radius:999px}
+
+    .consequence{background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); padding:14px 16px; border-radius:14px; margin:16px 0}
+    .consequence strong{color:var(--muted)}
+
+    .section{margin:16px 0}
+    .section h3{margin:.2rem 0 .5rem; font-size:14px; color:var(--muted); font-weight:600; letter-spacing:.4px; text-transform:uppercase}
+    .narrative{line-height:1.7; font-size:16px}
+
+    .voice-verde{color:var(--verde); font-style:italic}
+    .voice-violeta{color:var(--violeta); font-style:italic}
+
+    .choices{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px}
+    button.choice{padding:16px; min-height:48px; border-radius:12px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.03); color:var(--fg); cursor:pointer; transition:.2s transform ease, .2s background-color ease, .2s border-color ease; font-weight:600; font-size:17px}
+    button.choice:hover{transform:translateY(-1px); background:rgba(255,255,255,.06)}
+    button.choice:active{transform:translateY(0)}
+
+    .footer{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; color:var(--muted); font-size:13px; flex-wrap:wrap}
+
+    .controls{display:flex; gap:8px; flex-wrap:wrap}
+    .controls button{padding:12px 14px; min-height:44px; border-radius:10px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.02); color:var(--fg); cursor:pointer; font-size:15px}
+
+    .progress{height:8px; background:rgba(255,255,255,.06); border-radius:999px; overflow:hidden; margin:12px 0 0}
+    .progress > div{height:100%; background:linear-gradient(90deg, var(--accent), #ff7a7a); width:0%}
+
+    /* Transition UI */
+    .lock{display:grid; gap:12px; margin-top:16px}
+    .lock input{padding:14px; min-height:48px; border-radius:12px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.03); color:var(--fg); width:100%; font-size:17px}
+    .lock button{padding:14px; min-height:48px; border-radius:12px; border:1px solid rgba(255,255,255,.1); background:var(--accent); color:#111; font-weight:700; cursor:pointer; font-size:17px}
+    .hint{font-size:12px; color:var(--muted)}
+
+    @media (max-width:640px){ .choices{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap brand">
+      <div class="logo" aria-hidden="true"></div>
+      <h1>El Viaje de ROJO16 — Interactivo</h1>
+    </div>
+  </header>
+  <main class="wrap">
+    <div class="card" role="region" aria-live="polite">
+      <div class="inner">
+        <div class="title">
+          <h2 id="title">Fragmento</h2>
+          <span class="badge" id="badge">1 / 9</span>
+        </div>
+        <div id="consequence" class="consequence" hidden></div>
+
+        <div class="section" id="historySection">
+          <h3>Historia</h3>
+          <p id="history" class="narrative"></p>
+        </div>
+        <div class="section" id="verdeSection">
+          <h3>VERDE</h3>
+          <p id="verde" class="narrative voice-verde"></p>
+        </div>
+        <div class="section" id="violetaSection">
+          <h3>VIOLETA</h3>
+          <p id="violeta" class="narrative voice-violeta"></p>
+        </div>
+
+        <div id="choices" class="choices"></div>
+
+        <div class="footer">
+          <div id="footerHelp">Elegí con los botones o con el teclado: <strong>A</strong>/<strong>B</strong>.</div>
+          <div class="controls">
+            <button id="restartBtn" title="Reiniciar">Reiniciar</button>
+            <button id="saveBtn" title="Guardar progreso">Guardar</button>
+            <button id="loadBtn" title="Cargar progreso">Cargar</button>
+          </div>
+        </div>
+        <div class="progress" aria-hidden="true"><div id="bar"></div></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Vibración háptica (si disponible)
+    function vibrate(pattern){ if(navigator.vibrate){ navigator.vibrate(pattern); } }
+    function sanitize(s){ return (s||'').toString().trim().toLowerCase().replace(/\s+/g,''); }
+
+    // =====================
+    // Fragmentos (versión extendida)
+    // =====================
+    const fragments = [
+      {
+        id:1, title:"🌑 Fragmento 1 – El Despertar",
+        history:`ROJO16 se despertó sobresaltada. El amanecer apenas entraba por la ventana y la habitación estaba cubierta por una penumbra suave, esa luz indecisa que no es de noche ni de día. La sensación era clara: había soñado algo importante… pero el recuerdo se disolvía como agua entre los dedos. No quedaba imagen precisa, solo un eco. Una risa. Y detrás de esa risa, la silueta de un árbol tan alto que parecía rozar el cielo. El corazón le latía con fuerza, como si hubiera estado corriendo dentro de ese sueño, o como si lo que había vivido allí no fuese del todo un sueño. Giró la cabeza. Sobre la mesa de luz había un papel doblado en cuatro. No recordaba haberlo dejado allí la noche anterior. Dudó en tocarlo; la habitación entera parecía esperar junto a ella, en un silencio extraño. Lo abrió con cuidado. Dentro, apenas con unas líneas torpes de tinta oscura, había un dibujo: un árbol solitario. Pero la copa no estaba hecha de hojas, sino de una espiral que se extendía hacia afuera, como si tratara de escapar del papel. El trazo parecía vibrar bajo la luz, y por un instante, ROJO16 tuvo la certeza de que el dibujo la estaba observando. Un mareo la obligó a cerrar los ojos. Y en ese instante breve, la risa volvió, acompañada de un murmullo que no provenía de su mente ni de la habitación.`,
+        verde:`“Despertar no siempre es abrir los ojos, ROJO. Es escuchar lo que todavía late en vos. Ese papel no es un dibujo: es un espejo. El árbol está esperando que decidas si volver a recordarlo… o si vas a seguir corriendo de lo que fuiste.”`,
+        violeta:`“Elegí, ROJO. ¿Vas a hundirte en la espiral hacia adentro, reclamando lo que perdiste… o vas a dejar que la espiral te arrastre hacia afuera, donde nada te pertenece todavía?”`,
+        choices:{A:"Seguir la espiral hacia adentro → enfrentar los recuerdos.", B:"Seguir la espiral hacia afuera → entregarse a lo desconocido."},
+      },
+      {
+        id:2, title:"🌳 Fragmento 2 – El Árbol",
+        consequence:{ A:"El peso de la espiral la acompaña. El árbol aparece frente a ella como un recuerdo que nunca murió.", B:"El vértigo de la espiral aún la sacude. El árbol surge ahora como una promesa de lo que todavía no existe." },
+        history:`Frente a ella, el árbol inmenso. Sus raíces se hunden como venas negras y sus ramas giran en espiral hacia el cielo. El aire vibra, como si respirara. El suelo parece tener memoria: cada paso resuena como si despertara voces antiguas.`,
+        verde:`“La memoria y el deseo están en un mismo cuerpo, ROJO. Las raíces sostienen lo que fuiste. Las ramas buscan lo que todavía no sos.”`,
+        violeta:`“Elegí, ROJO: ¿querés hundirte en la memoria de las raíces… o entregarte al vértigo de las ramas?”`,
+        choices:{A:"Raíces.", B:"Ramas."},
+      },
+      {
+        id:3, title:"📜 Fragmento 3 – El Rincón de la Sabiduría",
+        consequence:{ A:"El suelo sigue temblando en su pecho. Cada libro parece reconocerla, como si ya estuviera marcada por su memoria.", B:"El viento de las ramas todavía le eriza la piel. Las páginas se mueven inquietas, como si quisieran mostrarle futuros no vividos." },
+        history:`Una sala circular la recibe, como si hubiera entrado a un santuario olvidado. Las paredes están cubiertas de símbolos que cambian de forma al mirarlos. Los estantes, infinitos, sostienen libros sin título; algunos encadenados, otros palpitando como si respiraran. En el centro, un atril sostiene un libro abierto que brilla con una luz azulada, como si ardiera en silencio. El aire huele a polvo antiguo y a revelación contenida.`,
+        verde:`“La sabiduría puede sanar o pesar, ROJO. Cada palabra escrita es un espejo distinto.”`,
+        violeta:`“Elegí. ¿Vas a abrir ese libro prohibido y cargar con lo que revele… o vas a cerrarlo y avanzar en la oscuridad de la intuición?”`,
+        choices:{A:"Abrir.", B:"Cerrar."},
+      },
+      {
+        id:4, title:"🕰️ Fragmento 4 – El Antiguo Carruaje",
+        consequence:{ A:"Las palabras arden en su mente. El carruaje parece una frase interminable, grabada en madera.", B:"El silencio del libro cerrado late. El carruaje parece callar con ella, guardando intuiciones nunca dichas." },
+        history:`En un descampado silencioso, espera un carruaje antiguo. La madera está gastada y agrietada, con la pintura descascarada por los años. Las ruedas, hundidas en el barro seco, parecen clavadas en el tiempo. Las cortinas deshilachadas se mueven con el viento como si aún guardaran secretos. Al verlo, ROJO16 siente que algo se abre en su memoria. No es solo un carruaje: es un cofre vivo. Recuerda las risas de los amigos que ya no están, las charlas interminables bajo la noche, las canciones improvisadas mientras el traqueteo marcaba el compás. Cada golpe de madera contra el camino fue una alegría guardada, cada viaje una chispa que iluminó un instante de su vida. El carruaje está inmóvil, pero en su interior laten todos los momentos que la acompañaron alguna vez. Es refugio y despedida, un recordatorio de lo que fue amado y compartido.`,
+        verde:`“Este carruaje fue viaje, hogar, refugio. Lo que guardaste en él nunca murió.”`,
+        violeta:`“Decidí. ¿Subís para revivir lo que fuiste… o lo dejás abandonado para seguir liviana?”`,
+        choices:{A:"Subir.", B:"Dejar."},
+      },
+      {
+        id:5, title:"💰 Fragmento 5 – Los Comerciantes",
+        consequence:{ A:"Los recuerdos vividos en el carruaje aún la envuelven. En el mercado, cada frasco parece contenerlos.", B:"El silencio del carruaje abandonado pesa. En el mercado, los frascos parecen ofrecer lo que dejó atrás." },
+        history:`Un mercado extraño se abre ante ella. Los puestos no venden frutas ni telas, sino frascos luminosos que palpitan como corazones. Cada etiqueta torcida tiene nombres imposibles: “Risa de infancia”, “Un abrazo perdido”, “El último adiós”. Los comerciantes observan en silencio, como si supieran qué recuerdo le falta y cuál está dispuesta a entregar.`,
+        verde:`“Los recuerdos son más valiosos que cualquier tesoro. Dar o tomar cambia lo que sos.”`,
+        violeta:`“Elegí. ¿Vas a entregar un recuerdo tuyo… o cargar con el de un desconocido?”`,
+        choices:{A:"Dar.", B:"Tomar."},
+      },
+      {
+        id:6, title:"🍷 Fragmento 6 – El Mesón",
+        consequence:{ A:"Siente la pérdida como un vacío. En el mesón, las risas parecen ocupar ese hueco.", B:"Un recuerdo ajeno late en su interior. En el mesón, cree reconocer rostros que nunca conoció." },
+        history:`La puerta del mesón se abre con un chirrido suave, y un aire cálido la envuelve de inmediato. El interior huele a pan recién horneado, café y leña encendida. Sobre largas mesas de madera, gente conversa animadamente, compartiendo platos abundantes que parecen no agotarse nunca. Cada rostro cambia cuando parpadea: a veces son desconocidos, otras veces parecen antiguos compañeros, incluso alguien que juraría haber visto en un recuerdo ajeno. Las velas iluminan la sala con una luz temblorosa, como si el lugar mismo respirara. ROJO16 siente que allí hay un refugio: un espacio donde nadie pregunta de dónde viene ni a dónde va, solo la invitan a sentarse y ser parte de la mesa.`,
+        verde:`“Esto también es amor, ROJO. El pan partido, la mesa compartida.”`,
+        violeta:`“Elegí. ¿Te sentás a la mesa a abrirte… o te quedás sola, observando desde lejos?”`,
+        choices:{A:"Sentarse.", B:"Quedarse sola."},
+      },
+      {
+        id:7, title:"🌄 Fragmento 7 – El Mirador",
+        consequence:{ A:"La calidez de las voces la acompaña hasta lo alto. Desde el mirador, siente que esas presencias siguen con ella.", B:"El murmullo quedó atrás. Desde el mirador, la altura intensifica su aislamiento." },
+        history:`ROJO16 asciende hasta un mirador de piedra. El viento sopla fuerte, llevando retazos de voces, carcajadas y silencios que parecen pertenecer tanto a su vida como a otras que nunca vivió. Desde lo alto, el paisaje se vuelve imposible: mares suspendidos en el cielo que quiebran en olas lentas, montañas que laten como corazones gigantes, nubes con un resplandor líquido. El horizonte no ofrece un solo mundo, sino varios entrelazados, como si cada recuerdo fuera una ventana distinta. En medio de esa inmensidad, ROJO16 entiende que lo que ve no está afuera: lo ve a través de lo que lleva adentro.`,
+        verde:`“No huyas de ellos, ROJO. Cada memoria te empuja hacia adelante.”`,
+        violeta:`“Decidí. ¿Vas a abrazar estos recuerdos como fuerza… o soltarlos en el viento?”`,
+        choices:{A:"Aceptar recuerdos.", B:"Soltar recuerdos."},
+      },
+      {
+        id:8, title:"🛒 Fragmento 8 – La Tienda de Abarrotes",
+        consequence:{ A:"Aceptó cada memoria. En la tienda, lo cotidiano brilla con un valor profundo.", B:"Soltó los recuerdos. En la tienda, todo parece ligero, sin pasado, solo presente." },
+        history:`La puerta de la tienda se abre y el aire tibio la envuelve. Los estantes están repletos de cosas simples y tentadoras: panes dulces, frutas frescas, frascos de miel, quesos, café recién molido. Todo parece dispuesto para el disfrute y la compañía, como si fuera un lugar hecho para que cada visitante encontrara lo que más le gusta y pudiera compartirlo con otros. ROJO16 recorre los pasillos con las manos rozando los objetos, pero en el fondo de su pecho late un vacío extraño. No sabe de dónde viene ni hacia dónde va. Aunque la tienda está llena de todo lo que podría darle calor y cercanía, ella se sigue sintiendo sola, como si nada de eso alcanzara para responder quién es.`,
+        verde:`“El amor también está en lo simple. En lo pequeño que sostiene lo inmenso.”`,
+        violeta:`“Elegí, ROJO. ¿Salís con las manos llenas… o con las manos vacías para que te las llenen?”`,
+        choices:{A:"Manos llenas.", B:"Manos vacías."},
+      },
+      {
+        id:9, title:"🏡 Fragmento 9 – Hogar",
+        consequence:{
+          A:"Las manos de ROJO pesan todavía con lo que eligió cargar. Al llegar al Hogar, descubre que aquello que sostenía ahora brilla sobre la cama, convertido en símbolo de todo lo que buscó.",
+          B:"ROJO llega al Hogar con las manos vacías. Pero allí, sobre la cama, entiende que ese vacío es espacio abierto: lugar para recibir lo inesperado, para dejar que otros la llenen de amor."
+        },
+        history:`El círculo se cierra. ROJO vuelve al mismo cuarto donde despertó aquella primera vez. Pero ya no es penumbra indecisa: la habitación está bañada por una luz cálida que se derrama desde la ventana, envolviendo cada rincón en claridad.\n\nSobre la cama encontró un regalo que no se esperaba. Pequeños gestos, sencillos y dulces, que parecen decirle sin palabras: “Siempre hubo un lugar para vos.”\n\nEl aire mismo respira distinto: no es el silencio pesado del principio, sino el sosiego de saber que alguien la espera, que alguien la nombra incluso cuando no está. El Hogar no interrumpe. El Hogar nunca la hace sentir de más. El Hogar celebra cuando llega. El Hogar la extraña cuando se va. El Hogar guarda su espacio, incluso en el vacío.`,
+        verde:`“Este siempre fue tu lugar, ROJO. El amor no tenías que salir a buscarlo: estaba acá, esperándote. El Hogar no son paredes ni objetos: es la certeza de que sos amada. No vuelvas a dudar de eso nunca más.”`,
+        violeta:`“No hay más elecciones, ROJO. Ya llegaste. Este es el único sitio donde nunca sobra nada de vos, donde siempre hay espacio para tu risa y tus silencios. Este es tu Hogar. Y siempre lo fue.”`,
+        choices:null,
+      },
+    ];
+
+    // =====================
+    // Transiciones (ajustadas)
+    // =====================
+    const transitions = [
+      { id:1,
+        text:`El aire de la habitación no se disipa. El papel del árbol ya no está, pero la sensación de un secreto oculto permanece. Algo bloquea el camino, como un candado invisible. Dirigite a la Plaza Grigera para continuar.`,
+        enigma:`¿Cuántos años tiene la plaza a la que llegaste? La respuesta la vas a encontrar en el lado más religioso.`,
+        answers:["204"]
+      },
+      { id:2,
+        text:`El eco de las raíces todavía vibra en tu pecho. Las ramas parecen extenderse hacia caminos ocultos. Pero algo bloquea la entrada al rincón donde aguarda la sabiduría. (Dirigite a Yenny y preguntá si no hay algo para vos).`,
+        enigma:`Hay textos que no se leen en soledad: marcan el alma y se vuelven regalo, algo que se comparte y se da a los demás.\nDecime el nombre del autor de los textos.`,
+        answers:["Albert","Espinosa","Albert Espinosa"]
+      },
+      { id:3,
+        text:`El resplandor del libro sigue ardiendo en tu interior, aunque lo hayas abierto o cerrado.\nNo podés desprenderte de esa marca: cada palabra, incluso el silencio, te acompaña ahora como un peso.\n\nLos textos te recordaron memoria de viajes del pasado, y te hace recordar tu carruaje...\n(Sí, hay que ir al 147 😂).`,
+        enigma:`¿Cuál es la patente del carruaje?`,
+        answers:["SBU933"]
+      },
+      { id:4,
+        text:`El carruaje se desvanece lentamente, como entregando su último secreto. Antes de llegar al mercado de los Comerciantes, un nuevo candado aparece en el camino. (Buscá en los puestos de Diario, ahí puede haber una pista para vos).`,
+        enigma:`Uno de los frascos del mercado tenía una palabra escrita en una hoja de diario arrugada. Escribila para continuar.`,
+        answers:["LEGO"]
+      },
+      { id:5,
+        text:`El mercado se desvanece detrás tuyo.\nLos frascos se apagan como brasas frías, y con ellos la sensación de lo que diste o lo que cargaste.\nEl cuerpo empieza a pesar, y el alma también: después de tanto intercambio, necesitás reponer energías.\n\nROJO recuerda un lugar donde suele ir a reponer energías.\n(Quizás en Starbucks puedas encontrar lo que necesitás, si te copás le comprás algo a tus amigos).`,
+        enigma:`Ese último frasco tenía pegado un papel arrugado con un nombre escrito a mano. Escribilo para poder avanzar.`,
+        answers:["Frappuccino","Frappuchino","Frapuccino"]
+      },
+      { id:6,
+        text:`Dejás atrás el Mesón con el eco de voces, el aroma del café y el pan aún tibio en tu memoria.\nEl cuerpo se siente más liviano, como si la comida compartida te hubiera devuelto algo más que fuerzas: una certeza de compañía.\n\nRespirás hondo. El aire afuera parece abrirse ante vos, empujándote hacia lo que viene.\n(En la terraza, las palomas esperan con un mensaje).`,
+        enigma:`¿De quién es el mensaje de la paloma?`,
+        answers:["TOP","Twenty One Pilots","21 pilots","21 pilotos","Midwest Indigo","Tyler Joseph","Josh Dun"]
+      },
+      { id:7,
+        text:`El viento del Mirador sopla fuerte, llevando consigo memorias que parecen flotar y desvanecerse. Desde lo alto, la vista abre un horizonte nuevo, pero un candado invisible te recuerda que todavía queda un paso más antes de bajar hacia la Tienda de Abarrotes. (Te toca ir a Josimar y comprar la cena).`,
+        enigma:`¿Cuál es el #Hashtag de los Doritos Dinamita?`,
+        answers:["PICANTEPERORICO"]
+      },
+      { id:8,
+        text:`La luz de la Tienda de Abarrotes comienza a apagarse.\nROJO16 camina con el eco de su elección aún fresco: manos llenas que pesan, o manos vacías que esperan ser colmadas.\n\nEl cansancio de tantas vueltas se mezcla con un único deseo: encontrar el Hogar.\nPero todavía no sabe cuál es, ni cómo hallarlo.\n(Espero tengas las zapatillas nuevas puestas).`,
+        enigma:`Dentro de tus botas nuevas vas a encontrar el camino de vuelta.`,
+        answers:["8A"]
+      },
+      { id:9,
+        text:`ROJO cruza el umbral y entra al Hogar.\nLa luz cálida la envuelve, y sobre la cama descansan los regalos que nunca se fueron, que siempre la esperaron aunque tardaran en llegar.\n\nSe sienta, los abre uno por uno, y descubre que cada detalle guarda más que recuerdos:\nen su interior hay una palabra, un secreto que la conecta con todo lo vivido.\n\nEse es el candado final. Solo al nombrarla podrá descansar en paz en su Hogar.`,
+        enigma:`Revisá los regalos que recibiste.\nDecime la palabra que encontraste adentro.`,
+        answers:["Bicibanditos"]
+      },
+    ];
+
+    // =====================
+    // Cierre Épico (se muestra tras la Transición 9 correcta)
+    // =====================
+    const EPIC_CLOSE = `El aire se aquieta. El mareo que la había perseguido desde el principio se desvanece por completo.\nLa risa del sueño inicial regresa, pero ahora suena distinta: cálida, cercana, como una caricia que envuelve.\n\nSobre la cama, los regalos que abrió ya no parecen simples objetos: son recuerdos convertidos en detalles, pruebas de que nunca fue olvidada. Siempre estuvieron ahí, esperándola, incluso cuando ella no podía verlos. Tardaron en llegar a sus manos, sí, pero jamás dejaron de habitar los corazones de quienes la aman.\n\n**VERDE111** susurra con ternura:\n“Te esperamos siempre, ROJO.\nAunque tardes, aunque dudes, aunque te pierdas.\nNunca dejamos de guardar tu lugar.”\n\nY por primera vez, **VIOLETA00** no habla con dureza. Su voz es clara y firme, como un abrazo inesperado:\n“Sabíamos que ibas a volver.\nPodés tardar lo que quieras: acá siempre vas a encontrarnos.\nNunca olvidamos quién sos, ni lo que llevás adentro.”\n\nLos regalos brillan con un fulgor suave, como si confirmaran lo dicho. Y ROJO entiende, al fin, que el Hogar no es un sitio al que se llega: es la certeza de que, sin importar la distancia o el tiempo, siempre hay alguien esperándola.\n\n**Amar y dejarse amar no es un destino.\nEs su Hogar.**`;
+
+    // =====================
+    // Estado y render
+    // =====================
+    let index = 0;            // índice de fragmento 0..8
+    let mode = 'fragment';    // 'fragment' | 'transition' | 'final'
+    let choices = [];         // 'A' | 'B' por fragmento (1..8)
+
+    const el = {
+      title: document.getElementById('title'),
+      badge: document.getElementById('badge'),
+      consequence: document.getElementById('consequence'),
+      history: document.getElementById('history'),
+      verde: document.getElementById('verde'),
+      violeta: document.getElementById('violeta'),
+      verdeSection: document.getElementById('verdeSection'),
+      violetaSection: document.getElementById('violetaSection'),
+      historySection: document.getElementById('historySection'),
+      choices: document.getElementById('choices'),
+      bar: document.getElementById('bar'),
+      footerHelp: document.getElementById('footerHelp'),
+      restart: document.getElementById('restartBtn'),
+      save: document.getElementById('saveBtn'),
+      load: document.getElementById('loadBtn'),
+    };
+
+    function render(){
+      if(mode === 'fragment'){
+        if(index < 0 || index >= fragments.length){ index = 0; }
+        const frag = fragments[index];
+        el.title.textContent = frag.title;
+        el.badge.textContent = `${index+1} / ${fragments.length}`;
+
+        // Consecuencia
+        if(index>0){
+          const prevChoice = choices[index-1];
+          const cons = frag.consequence?.[prevChoice];
+          if(cons){ el.consequence.hidden = false; el.consequence.innerHTML = `<strong>Consecuencia de tu elección:</strong> ${cons}`; }
+          else { el.consequence.hidden = true; el.consequence.textContent = ''; }
+        } else { el.consequence.hidden = true; el.consequence.textContent = ''; }
+
+        el.history.textContent = frag.history || '';
+        el.verde.textContent = frag.verde || '';
+        el.violeta.textContent = frag.violeta || '';
+
+        el.verdeSection.style.display = frag.verde ? '' : 'none';
+        el.violetaSection.style.display = frag.violeta ? '' : 'none';
+        el.historySection.style.display = '';
+
+        // Botones de elección / acción final
+        el.choices.innerHTML = '';
+        if(frag.choices){
+          const aBtn = document.createElement('button');
+          aBtn.className = 'choice';
+          aBtn.textContent = `A — ${frag.choices.A}`;
+          aBtn.onclick = ()=> choose('A');
+
+          const bBtn = document.createElement('button');
+          bBtn.className = 'choice';
+          bBtn.textContent = `B — ${frag.choices.B}`;
+          bBtn.onclick = ()=> choose('B');
+
+          el.choices.appendChild(aBtn);
+          el.choices.appendChild(bBtn);
+          el.footerHelp.innerHTML = 'Elegí con los botones o con el teclado: <strong>A</strong>/<strong>B</strong>.';
+        } else {
+          // Fragmento 9 no tiene elecciones -> botón para Candado Final
+          const toFinalLock = document.createElement('button');
+          toFinalLock.className = 'choice';
+          toFinalLock.textContent = '🔒 Candado final';
+          toFinalLock.onclick = ()=> { mode = 'transition'; render(); vibrate([20,40,20]); };
+          el.choices.appendChild(toFinalLock);
+          el.footerHelp.textContent = 'Abrí el candado final para cerrar el viaje.';
+        }
+
+        const progress = (index)/(fragments.length-1) * 100;
+        el.bar.style.width = `${progress}%`;
+      }
+      else if(mode === 'transition'){
+        // tIndex: transición correspondiente al fragmento actual (1→1, 2→2, ... 9→9)
+        const tIndex = (index < transitions.length) ? index : transitions.length - 1;
+        const t = transitions[tIndex];
+        el.title.textContent = `🔑 Transición ${t.id}`;
+        el.badge.textContent = `Candado ${t.id}`;
+
+        el.consequence.hidden = true;
+        el.history.textContent = t.text || '';
+        el.verde.textContent = '';
+        el.violeta.textContent = t.enigma || '';
+
+        el.verdeSection.style.display = 'none';
+        el.violetaSection.style.display = '';
+        el.historySection.style.display = '';
+
+        el.choices.innerHTML = '';
+        const lockWrap = document.createElement('div');
+        lockWrap.className = 'lock';
+        lockWrap.innerHTML = `
+          <input id=\"answerInput\" type=\"text\" inputmode=\"text\" autocomplete=\"off\" placeholder=\"Escribí la respuesta\" aria-label=\"Respuesta del enigma\">\n          <button id=\"validateBtn\">Validar</button>\n          <div class=\"hint\">No distingue mayúsculas/minúsculas. Se ignoran espacios.</div>`;
+        el.choices.appendChild(lockWrap);
+
+        const input = lockWrap.querySelector('#answerInput');
+        const btn = lockWrap.querySelector('#validateBtn');
+        input.focus();
+
+        const tryValidate = ()=>{
+          const val = sanitize(input.value);
+          const ok = (t.answers||[]).some(a => sanitize(a) === val);
+          if(ok){
+            vibrate([30,50,30]);
+            if(index < fragments.length-1){
+              mode = 'fragment';
+              index = Math.min(index+1, fragments.length-1);
+            } else {
+              mode = 'final';
+            }
+            saveSession();
+            render();
+            window.scrollTo({top:0, behavior:'smooth'});
+          } else {
+            vibrate(150);
+            input.setCustomValidity('Respuesta incorrecta');
+            input.reportValidity();
+            setTimeout(()=>{ input.setCustomValidity(''); }, 1200);
+          }
+        };
+
+        btn.onclick = tryValidate;
+        input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') tryValidate(); });
+
+        el.footerHelp.textContent = 'Escribí la respuesta del enigma para desbloquear.';
+        const progress = (index)/(fragments.length-1) * 100;
+        el.bar.style.width = `${progress}%`;
+      }
+      else if(mode === 'final'){
+        el.title.textContent = '✨ Cierre Épico';
+        el.badge.textContent = 'Final';
+        el.consequence.hidden = true;
+        el.historySection.style.display = '';
+        el.verdeSection.style.display = 'none';
+        el.violetaSection.style.display = 'none';
+        el.history.innerHTML = EPIC_CLOSE
+          .split('\n')
+          .map(p=> p.startsWith('**') ? `<p class=\"narrative\"><strong>${p.replace(/\*\*/g,'')}</strong></p>` : `<p class=\"narrative\">${p}</p>`)
+          .join('');
+        el.choices.innerHTML = '';
+        const end = document.createElement('div');
+        end.className = 'narrative';
+        end.style.marginTop = '8px';
+        end.innerHTML = '<em>Fin del viaje. Podés reiniciar cuando quieras.</em>';
+        el.choices.appendChild(end);
+        el.footerHelp.textContent = 'Gracias por jugar.';
+        el.bar.style.width = '100%';
+      }
+    }
+
+    function choose(letter){
+      vibrate(40);
+      choices[index] = letter;
+      // tras elegir en un fragmento, pasamos a su transición correspondiente
+      mode = 'transition';
+      saveSession();
+      render();
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    window.addEventListener('keydown', (e)=>{
+      if(mode !== 'fragment') return;
+      if(['a','A'].includes(e.key)){
+        const frag = fragments[index];
+        if(frag && frag.choices) choose('A');
+      }
+      if(['b','B'].includes(e.key)){
+        const frag = fragments[index];
+        if(frag && frag.choices) choose('B');
+      }
+    });
+
+    function saveSession(){
+      try{
+        localStorage.setItem('rojo16_index', String(index));
+        localStorage.setItem('rojo16_mode', mode);
+        localStorage.setItem('rojo16_choices', JSON.stringify(choices));
+      }catch{}
+    }
+
+    function loadSession(){
+      try{
+        const i = parseInt(localStorage.getItem('rojo16_index')||'0',10);
+        const m = localStorage.getItem('rojo16_mode')||'fragment';
+        const c = JSON.parse(localStorage.getItem('rojo16_choices')||'[]');
+        if(!Number.isNaN(i) && i>=0 && i<fragments.length){ index=i; }
+        mode = (m === 'transition' || m === 'fragment' || m === 'final') ? m : 'fragment';
+        if(Array.isArray(c)) choices=c; else choices=[];
+      }catch{}
+      render();
+    }
+
+    document.getElementById('restartBtn').onclick = ()=>{ index = 0; choices = []; mode = 'fragment'; render(); saveSession(); window.scrollTo({top:0,behavior:'smooth'}); };
+    document.getElementById('saveBtn').onclick = ()=>{ saveSession(); document.getElementById('saveBtn').textContent='Guardado'; setTimeout(()=> document.getElementById('saveBtn').textContent='Guardar', 1200)};
+    document.getElementById('loadBtn').onclick = ()=>{ loadSession(); document.getElementById('loadBtn').textContent='Cargado'; setTimeout(()=> document.getElementById('loadBtn').textContent='Cargar', 1200)};
+
+    loadSession();
+  </script>
+</body>
+</html>
